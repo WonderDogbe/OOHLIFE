@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOHLIFE — Personal Life Path Guide</title>
+    <meta name="description" content="Discover your personalized life path insight based on your date of birth with OOHLIFE.">
+    <!-- Inline script to prevent theme flicker -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('oohlife-theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=12">
+</head>
+<body>
+
+    <!-- Top Navigation with Theme Toggle (Sticky Top Bar) -->
+    <header class="top-nav-bar">
+        <nav class="top-nav">
+            <div class="nav-brand">OOH<span>LIFE</span></div>
+            <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme" title="Switch Theme">
+                <!-- Sun Icon (shown in dark mode) -->
+                <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <!-- Moon Icon (shown in light mode) -->
+                <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Header -->
+        <header class="hero-header">
+            <h1 class="brand-title">OOH<span>LIFE</span></h1>
+            <p class="subtitle">Enter your first name and birth date to discover your core Life Path frequency.</p>
+        </header>
+
+        <!-- Form Card -->
+        <section class="card form-card">
+            {% if error %}
+            <div class="alert alert-error" role="alert" id="error-alert">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/" class="insight-form" id="insight-form">
+                <div class="form-group">
+                    <label for="name">First Name</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            placeholder="e.g. Wonder" 
+                            required 
+                            pattern="^[^\s]+$"
+                            title="Please enter only your first name (no spaces)."
+                            value="{{ name if name else '' }}"
+                            autocomplete="given-name"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <input 
+                            type="date" 
+                            id="dob" 
+                            name="dob" 
+                            required 
+                            max="{{ max_date if max_date else '' }}"
+                            value="{{ dob if dob else '' }}"
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn" {% if message %}disabled{% endif %}>
+                    <span>Reveal My Life Insight</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </section>
+
+        {% if message %}
+        <!-- Result Section -->
+        <section class="result-container" id="result-box">
+            <!-- Big Hero Card Matching Exact Reference -->
+            <div class="big-reveal-card">
+                <div class="reveal-top-bar">
+                    <span class="path-badge">LIFE PATH {{ digit }}</span>
+                </div>
+                <h2 class="reveal-heading">{{ name }}, your life follows Life Path {{ digit }}</h2>
+                {% if profile and profile.title %}
+                <p class="reveal-subheading">{{ profile.title }} <span class="subheading-sep">—</span> {{ profile.subtitle }}</p>
+                {% endif %}
+                <div class="reveal-quote">
+                    <p>“{{ message }}”</p>
+                </div>
+            </div>
+
+            {% if profile and (profile.core_meaning or profile.spectrum or profile.relationships) %}
+            <!-- Dropdown Toggle for Content that Follows -->
+            <div class="breakdown-accordion" id="breakdown-accordion">
+                <button type="button" class="accordion-trigger" id="accordion-btn" aria-expanded="false" aria-controls="accordion-content">
+                    <span class="trigger-label">
+                        <svg class="spark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span>Explore Full Life Path Reading & Breakdown</span>
+                    </span>
+                    <svg class="chevron-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+
+                <div class="accordion-content" id="accordion-content" hidden>
+                    <div class="accordion-inner">
+
+                        <!-- Deep Reading / Core Meaning -->
+                        {% if profile.core_meaning %}
+                        <div class="breakdown-section">
+                            <h3 class="section-title">The Real Essence of Your Path</h3>
+                            <div class="reading-text">
+                                {% for paragraph in profile.core_meaning %}
+                                <p>{{ paragraph }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Psychological Spectrum (Single Card Slider) -->
+                        {% if profile.spectrum %}
+                        <div class="breakdown-section">
+                            <div class="section-header-flex">
+                                <div>
+                                    <h3 class="section-title">The Psychological Spectrum</h3>
+                                    <p class="section-intro">Your life path is an evolving spectrum ranging from early lessons to aligned mastery:</p>
+                                </div>
+                                <div class="spectrum-nav-controls">
+                                    <button type="button" class="spectrum-arrow-btn prev-btn" id="spec-prev-btn" aria-label="Previous state" title="Previous State">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="15 18 9 12 15 6"></polyline>
+                                        </svg>
+                                    </button>
+                                    <span class="spectrum-counter" id="spec-counter">1 / {{ profile.spectrum|length }}</span>
+                                    <button type="button" class="spectrum-arrow-btn next-btn" id="spec-next-btn" aria-label="Next state" title="Next State">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Single Card Carousel -->
+                            <div class="spectrum-carousel-container">
+                                {% for state in profile.spectrum %}
+                                <div class="spectrum-card spectrum-slide {{ state.badge_class }} {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}">
+                                    <div class="spectrum-header">
+                                        <span class="spectrum-badge">{{ state.level }}</span>
+                                        <span class="spectrum-tag">{{ state.tag }}</span>
+                                    </div>
+                                    <h4 class="spectrum-heading">{{ state.summary }}</h4>
+                                    <p class="spectrum-desc">{{ state.description }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Indicator Navigation Pills -->
+                            <div class="spectrum-indicators" id="spec-indicators">
+                                {% for state in profile.spectrum %}
+                                <button type="button" class="spec-dot {% if loop.first %}active{% endif %}" data-target="{{ loop.index0 }}" aria-label="Go to {{ state.level }}">
+                                    <span>{{ state.level }}</span>
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Compatibility & Relationships -->
+                        {% if profile.relationships %}
+                        <div class="breakdown-section">
+                            <h3 class="section-title">Relationships & Compatibility</h3>
+                            <div class="compatibility-grid">
+                                {% for rel in profile.relationships %}
+                                <div class="compatibility-card type-{{ rel.status_type }}">
+                                    <div class="comp-header">
+                                        <span class="comp-pair">{{ rel.pairing }}</span>
+                                        <span class="comp-status">{{ rel.status }}</span>
+                                    </div>
+                                    <p class="comp-detail">{{ rel.detail }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© OOHLIFE — Timeless Life Path Insights.</p>
+        </footer>
+    </main>
+
+    <!-- Client-side Interactive Logic -->
+    <script>
+        // Theme Toggle Controller
+        const themeToggle = document.getElementById('theme-toggle');
+        const rootHtml = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = rootHtml.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            rootHtml.setAttribute('data-theme', newTheme);
+            localStorage.setItem('oohlife-theme', newTheme);
+        });
+
+        // Dropdown Accordion Controller
+        const accordionBtn = document.getElementById('accordion-btn');
+        const accordionContent = document.getElementById('accordion-content');
+
+        if (accordionBtn && accordionContent) {
+            accordionBtn.addEventListener('click', () => {
+                const isExpanded = accordionBtn.getAttribute('aria-expanded') === 'true';
+                accordionBtn.setAttribute('aria-expanded', !isExpanded);
+                accordionContent.hidden = isExpanded;
+                accordionBtn.classList.toggle('active', !isExpanded);
+            });
+        }
+
+        // Set max date on birth date picker to today (must be in the past)
+        const dobInput = document.getElementById('dob');
+        if (dobInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dobInput.max = today;
+        }
+
+        // Reveal Button State Controller (disabled on reveal, re-enabled when user edits name or date)
+        const nameInput = document.getElementById('name');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function enableSubmitBtn() {
+            if (submitBtn && submitBtn.disabled) {
+                submitBtn.disabled = false;
+            }
+        }
+
+        if (nameInput) {
+            nameInput.addEventListener('input', enableSubmitBtn);
+        }
+        if (dobInput) {
+            dobInput.addEventListener('input', enableSubmitBtn);
+            dobInput.addEventListener('change', enableSubmitBtn);
+        }
+
+        // Psychological Spectrum Single-Card Carousel Controller
+        const slides = document.querySelectorAll('.spectrum-slide');
+        const prevBtn = document.getElementById('spec-prev-btn');
+        const nextBtn = document.getElementById('spec-next-btn');
+        const counter = document.getElementById('spec-counter');
+        const dots = document.querySelectorAll('.spec-dot');
+
+        let currentSlide = 0;
+
+        function updateSlide(index) {
+            if (!slides.length) return;
+            currentSlide = (index + slides.length) % slides.length;
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === currentSlide);
+            });
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+            if (counter) {
+                counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+            }
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => updateSlide(currentSlide - 1));
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => updateSlide(currentSlide + 1));
+        }
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                const targetIdx = parseInt(dot.getAttribute('data-target'), 10);
+                updateSlide(targetIdx);
+            });
+        });
+
+        // Auto-scroll to results if present
+        const resultBox = document.getElementById('result-box');
+        if (resultBox) {
+            setTimeout(() => {
+                resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 80);
+        }
+    </script>
+</body>
+</html>
