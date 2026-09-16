@@ -1,8 +1,16 @@
+import logging
 import os
 from datetime import datetime
 from flask import Flask, jsonify, render_template, request
 
 from life_paths import LIFE_PATHS
+
+# Suppress repetitive live-reload health check logs from spamming the console
+class _LiveReloadLogFilter(logging.Filter):
+    def filter(self, record):
+        return "_live_reload_check" not in record.getMessage()
+
+logging.getLogger("werkzeug").addFilter(_LiveReloadLogFilter())
 
 app = Flask(__name__)
 # Ensure templates and static files are never cached during development
