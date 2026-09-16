@@ -42,6 +42,12 @@ LIFE_PATHS = {
                         "status": "Universal Harmonizer",
                         "status_type": "high",
                         "detail": "Like water, 0 adapts and magnifies the energy of whoever it pairs with, acting as a mirror of unconditional support."
+                },
+                {
+                        "pairing": "0 & Solitude / Freedom",
+                        "status": "Spacious Sanctuary",
+                        "status_type": "medium",
+                        "detail": "Thrives best with partners who honor quiet autonomy and emotional spaciousness without imposing rigid expectations."
                 }
         ]
 },

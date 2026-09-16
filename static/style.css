@@ -460,7 +460,50 @@ html[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   Dropdown Accordion for Detailed Content
+   Breakdown Section Cards (Separate Independent Cards)
+   ========================================================================== */
+.breakdown-card {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    padding: 2.25rem 2rem;
+    box-shadow: 0 14px 32px -10px rgba(0, 0, 0, 0.35);
+    transition: var(--theme-transition);
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.card-header-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.card-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.section-badge {
+    align-self: flex-start;
+    background: rgba(99, 102, 241, 0.14);
+    color: var(--accent-indigo);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    margin-bottom: 0.2rem;
+}
+
+/* ==========================================================================
+   Dropdown Accordion for Detailed Content (Legacy / Fallback)
    ========================================================================== */
 .breakdown-accordion {
     width: 100%;
@@ -764,15 +807,14 @@ html[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* Compatibility Grid (Masonry Columns to avoid vertical gaps) */
+/* Compatibility Grid (Side-by-side 2 Cards) */
 .compatibility-grid {
-    columns: 2 300px;
-    column-gap: 0.85rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
 }
 
 .compatibility-card {
-    break-inside: avoid;
-    margin-bottom: 0.85rem;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-md);
@@ -847,7 +889,8 @@ html[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
     .form-card {
         padding: 1.5rem 1.15rem;
     }
-    .big-reveal-card {
+    .big-reveal-card,
+    .breakdown-card {
         padding: 1.6rem 1.25rem;
     }
     .reveal-heading {
@@ -869,6 +912,6 @@ html[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
         grid-template-columns: 1fr;
     }
     .compatibility-grid {
-        columns: 1;
+        grid-template-columns: 1fr;
     }
 }

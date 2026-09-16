@@ -1,9 +1,37 @@
+import os
 from datetime import datetime
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 
 from life_paths import LIFE_PATHS
 
 app = Flask(__name__)
+# Ensure templates and static files are never cached during development
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
+
+def get_latest_mtime():
+    """Calculates the latest modified timestamp across project source files for auto-refresh."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    latest = 0
+    for root, dirs, files in os.walk(base_dir):
+        # Ignore virtual environments, git, and cache
+        if any(ignored in root for ignored in [".git", ".venv", "__pycache__"]):
+            continue
+        for f in files:
+            if f.endswith((".py", ".html", ".css", ".js")):
+                fp = os.path.join(root, f)
+                try:
+                    latest = max(latest, os.path.getmtime(fp))
+                except OSError:
+                    pass
+    return latest
+
+
+@app.route("/_live_reload_check")
+def live_reload_check():
+    return jsonify({"mtime": get_latest_mtime()})
+
 
 # Curated life insights mapped to indices 0 through 9
 # You can easily customize these 10 outputs.
@@ -35,9 +63,11 @@ LIFE_OUTPUTS = [
 def index():
     today_str = datetime.now().strftime("%Y-%m-%d")
 
-    if request.method == "POST":
-        raw_name = request.form.get("name", "").strip()
-        dob_raw = request.form.get("dob", "").strip()
+    # Read from form or query parameters (allowing seamless browser auto-reload)
+    raw_name = request.values.get("name", "").strip()
+    dob_raw = request.values.get("dob", "").strip()
+
+    if request.method == "POST" or (raw_name and dob_raw):
 
         if not raw_name or not dob_raw:
             return render_template(

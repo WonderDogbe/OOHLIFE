@@ -138,102 +138,91 @@
                 </div>
             </div>
 
-            {% if profile and (profile.core_meaning or profile.spectrum or profile.relationships) %}
-            <!-- Dropdown Toggle for Content that Follows -->
-            <div class="breakdown-accordion" id="breakdown-accordion">
-                <button type="button" class="accordion-trigger" id="accordion-btn" aria-expanded="false" aria-controls="accordion-content">
-                    <span class="trigger-label">
-                        <svg class="spark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                        <span>Explore Full Life Path Reading & Breakdown</span>
-                    </span>
-                    <svg class="chevron-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </button>
-
-                <div class="accordion-content" id="accordion-content" hidden>
-                    <div class="accordion-inner">
-
-                        <!-- Deep Reading / Core Meaning -->
-                        {% if profile.core_meaning %}
-                        <div class="breakdown-section">
-                            <h3 class="section-title">The Real Essence of Your Path</h3>
-                            <div class="reading-text">
-                                {% for paragraph in profile.core_meaning %}
-                                <p>{{ paragraph }}</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Psychological Spectrum (Single Card Slider) -->
-                        {% if profile.spectrum %}
-                        <div class="breakdown-section">
-                            <div class="section-header-flex">
-                                <div>
-                                    <h3 class="section-title">The Psychological Spectrum</h3>
-                                    <p class="section-intro">Your life path is an evolving spectrum ranging from early lessons to aligned mastery:</p>
-                                </div>
-                                <div class="spectrum-nav-controls">
-                                    <button type="button" class="spectrum-arrow-btn prev-btn" id="spec-prev-btn" aria-label="Previous state" title="Previous State">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="15 18 9 12 15 6"></polyline>
-                                        </svg>
-                                    </button>
-                                    <span class="spectrum-counter" id="spec-counter">1 / {{ profile.spectrum|length }}</span>
-                                    <button type="button" class="spectrum-arrow-btn next-btn" id="spec-next-btn" aria-label="Next state" title="Next State">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Single Card Carousel -->
-                            <div class="spectrum-carousel-container">
-                                {% for state in profile.spectrum %}
-                                <div class="spectrum-card spectrum-slide {{ state.badge_class }} {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}">
-                                    <div class="spectrum-header">
-                                        <span class="spectrum-badge">{{ state.level }}</span>
-                                        <span class="spectrum-tag">{{ state.tag }}</span>
-                                    </div>
-                                    <h4 class="spectrum-heading">{{ state.summary }}</h4>
-                                    <p class="spectrum-desc">{{ state.description }}</p>
-                                </div>
-                                {% endfor %}
-                            </div>
-
-                            <!-- Indicator Navigation Pills -->
-                            <div class="spectrum-indicators" id="spec-indicators">
-                                {% for state in profile.spectrum %}
-                                <button type="button" class="spec-dot {% if loop.first %}active{% endif %}" data-target="{{ loop.index0 }}" aria-label="Go to {{ state.level }}">
-                                    <span>{{ state.level }}</span>
-                                </button>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Compatibility & Relationships -->
-                        {% if profile.relationships %}
-                        <div class="breakdown-section">
-                            <h3 class="section-title">Relationships & Compatibility</h3>
-                            <div class="compatibility-grid">
-                                {% for rel in profile.relationships %}
-                                <div class="compatibility-card type-{{ rel.status_type }}">
-                                    <div class="comp-header">
-                                        <span class="comp-pair">{{ rel.pairing }}</span>
-                                        <span class="comp-status">{{ rel.status }}</span>
-                                    </div>
-                                    <p class="comp-detail">{{ rel.detail }}</p>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
+            <!-- Section 1: Core Essence Card -->
+            {% if profile and profile.core_meaning %}
+            <div class="breakdown-card">
+                <div class="card-header-bar">
+                    <div class="card-title-group">
+                        <span class="section-badge">ESSENCE</span>
+                        <h3 class="section-title">The Real Essence of Your Path</h3>
                     </div>
+                </div>
+                <div class="reading-text">
+                    {% for paragraph in profile.core_meaning %}
+                    <p>{{ paragraph }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Section 2: Psychological Spectrum Card -->
+            {% if profile and profile.spectrum %}
+            <div class="breakdown-card">
+                <div class="section-header-flex">
+                    <div class="card-title-group">
+                        <span class="section-badge">EVOLUTION</span>
+                        <h3 class="section-title">The Psychological Spectrum</h3>
+                        <p class="section-intro">Your life path is an evolving spectrum ranging from early lessons to aligned mastery:</p>
+                    </div>
+                    <div class="spectrum-nav-controls">
+                        <button type="button" class="spectrum-arrow-btn prev-btn" id="spec-prev-btn" aria-label="Previous state" title="Previous State">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <span class="spectrum-counter" id="spec-counter">1 / {{ profile.spectrum|length }}</span>
+                        <button type="button" class="spectrum-arrow-btn next-btn" id="spec-next-btn" aria-label="Next state" title="Next State">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Single Card Carousel -->
+                <div class="spectrum-carousel-container">
+                    {% for state in profile.spectrum %}
+                    <div class="spectrum-card spectrum-slide {{ state.badge_class }} {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}">
+                        <div class="spectrum-header">
+                            <span class="spectrum-badge">{{ state.level }}</span>
+                            <span class="spectrum-tag">{{ state.tag }}</span>
+                        </div>
+                        <h4 class="spectrum-heading">{{ state.summary }}</h4>
+                        <p class="spectrum-desc">{{ state.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Indicator Navigation Pills -->
+                <div class="spectrum-indicators" id="spec-indicators">
+                    {% for state in profile.spectrum %}
+                    <button type="button" class="spec-dot {% if loop.first %}active{% endif %}" data-target="{{ loop.index0 }}" aria-label="Go to {{ state.level }}">
+                        <span>{{ state.level }}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Section 3: Relationships & Compatibility Card -->
+            {% if profile and profile.relationships %}
+            <div class="breakdown-card">
+                <div class="card-header-bar">
+                    <div class="card-title-group">
+                        <span class="section-badge">SYNERGY</span>
+                        <h3 class="section-title">Relationships & Compatibility</h3>
+                    </div>
+                </div>
+                <div class="compatibility-grid">
+                    {% for rel in profile.relationships[:2] %}
+                    <div class="compatibility-card type-{{ rel.status_type }}">
+                        <div class="comp-header">
+                            <span class="comp-pair">{{ rel.pairing }}</span>
+                            <span class="comp-status">{{ rel.status }}</span>
+                        </div>
+                        <p class="comp-detail">{{ rel.detail }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endif %}
@@ -340,6 +329,46 @@
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 80);
         }
+
+        // Seamless State Preservation on Auto-Reload (Avoids "Confirm Form Resubmission" prompt)
+        {% if message %}
+        if (window.history.replaceState) {
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('name', '{{ name }}');
+            currentUrl.searchParams.set('dob', '{{ dob }}');
+            window.history.replaceState({}, '', currentUrl);
+        }
+        {% endif %}
+
+        // Live Auto-Reload Controller (Auto-refreshes browser when any code/template/css changes)
+        let lastServerMtime = null;
+        let isReloading = false;
+
+        function checkLiveReload() {
+            if (isReloading) return;
+            fetch('/_live_reload_check')
+                .then(res => {
+                    if (!res.ok) throw new Error('Server not ready');
+                    return res.json();
+                })
+                .then(data => {
+                    if (lastServerMtime !== null && data.mtime > lastServerMtime) {
+                        isReloading = true;
+                        window.location.reload();
+                    } else {
+                        lastServerMtime = data.mtime;
+                    }
+                })
+                .catch(() => {
+                    // Server might be restarting during file edits; retry smoothly
+                })
+                .finally(() => {
+                    if (!isReloading) {
+                        setTimeout(checkLiveReload, 750);
+                    }
+                });
+        }
+        checkLiveReload();
     </script>
 </body>
 </html>
